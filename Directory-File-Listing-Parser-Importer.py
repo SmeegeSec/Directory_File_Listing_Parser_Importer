@@ -172,7 +172,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         generatePanel = JPanel()
         generatePanel.layout = BorderLayout(3, 3)
         generateButton = JButton('Generate URL List', actionPerformed=self.generateUrlList)
-        importButton = JButton('Import URL List to Burp Site Map', actionPerformed=self.importList)
+        importButton = JButton('Import URL List to Burp Site Map', actionPerformed=self.confirmImport)
         generatePanel.add("North", generateButton)
         generatePanel.add("South", importButton)
         self.rightPanel.add("South", generatePanel)
@@ -232,7 +232,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         self.window.dispose()
 
     # This is initiated by the user selecting the 'import to burp' button.  Checks each generated URL for a valid response and adds it to the site map
-    def importList(self, event):
+    def importList(self):
         if self.parsedList:
             urlsAdded = 0
             # Loop through each URL and check the response.  If the response code is less than 404, add to site map
@@ -258,6 +258,10 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         else:
             JOptionPane.showMessageDialog(None, "The list of URLs is empty.  Please generate a valid list to import.")
 
+    def confirmImport(self, event):
+        result = JOptionPane.showConfirmDialog(None, "You are about to make requests to potentially sensitive resources.\nRemove any sensitive resources from your listing file.\nProceed to import to Burp Site Map?", "Careful!", JOptionPane.WARNING_MESSAGE)
+        if result == 0:
+            self.importList()
 
 # Class to parse the directory listing file specified by the user
 class ListingParser:

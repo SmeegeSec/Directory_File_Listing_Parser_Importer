@@ -27,6 +27,8 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
     # Implement IBurpExtender
     def registerExtenderCallbacks(self, callbacks):
 
+        self.printHeader()
+
         # Set extension name
         callbacks.setExtensionName("Directory Listing Parser for Burp Suite")
 
@@ -157,7 +159,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         if self.cookies:
             self.textArea.append('Cookies Found:\n')
             for cookie in self.cookies:
-                if cookie.getDomain() == self.originalMsgHost:
+                if cookie.getDomain() in self.originalMsgHost:
                     self.cookie += cookie.getName() + '=' + cookie.getValue() + '; '
                     self.textArea.append(cookie.getName() + '=' + cookie.getValue() + '\n')
         scrollArea = JScrollPane(self.textArea)
@@ -263,6 +265,8 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         if result == 0:
             self.importList()
 
+    def printHeader(self):
+        print '-------------------\nDirectory and File Listing Parser and Burp Site Map Importer\nSmeegeSec@gmail.com\n-------------------\n\n'
 # Class to parse the directory listing file specified by the user
 class ListingParser:
     def parse(self, hostname, prefix, ssl, port, listing, filename):
